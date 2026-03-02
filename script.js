@@ -1,23 +1,34 @@
-// تفعيل الأزرار (مثال: تغيير النشاط عند النقر)
-document.querySelectorAll('.action-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        // يمكن توجيه المستخدم إلى صفحة اللعبة لاحقاً
-        alert('سيتم الانتقال إلى اللعبة قريباً!');
-    });
-});
+// دوال مساعدة للتوجيه والتحقق من المصادقة
+function requireAuth() {
+    const user = auth.currentUser;
+    if (!user) {
+        window.location.href = 'login.html';
+        return false;
+    }
+    return user;
+}
 
-document.querySelectorAll('.game-item').forEach(item => {
-    item.addEventListener('click', function() {
-        document.querySelectorAll('.game-item').forEach(i => i.classList.remove('active'));
-        this.classList.add('active');
-        // هنا يمكن تغيير اللعبة المعروضة
+// تسجيل الخروج
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = 'login.html';
     });
-});
+}
 
-document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', function() {
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        this.classList.add('active');
-        // تغيير المحتوى حسب التبويب
+// حفظ بيانات المستخدم بعد التسجيل
+function saveUserData(user) {
+    const userRef = database.ref('users/' + user.uid);
+    userRef.once('value').then(snapshot => {
+        if (!snapshot.exists()) {
+            // مستخدم جديد – ننشئ له سجلاً
+            userRef.set({
+                name: user.displayName || 'مستخدم',
+                email: user.email || '',
+                phone: user.phoneNumber || '',
+                points: 1000,
+                avatar: user.photoURL || '',
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            });
+        }
     });
-});
+}
