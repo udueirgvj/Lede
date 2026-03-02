@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اللعبة المحلية - Clipn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #0a0f1f, #141b2b);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            color: white;
+        }
+        .game-container {
+            max-width: 400px;
+            width: 100%;
+            background: rgba(18,25,40,0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 30px 20px;
+            box-shadow: 0 25px 50px -8px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,215,0,0.3);
+            text-align: center;
+        }
+        h1 {
+            color: gold;
+            margin-bottom: 20px;
+        }
+        .info {
+            background: rgba(0,0,0,0.3);
+            border-radius: 30px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid gold;
+        }
+        .info p {
+            margin: 10px 0;
+            font-size: 1.2rem;
+        }
+        .players-list {
+            list-style: none;
+            padding: 0;
+        }
+        .players-list li {
+            background: rgba(255,215,0,0.1);
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 30px;
+        }
+        .btn {
+            background: gold;
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 5px 0 #b8860b;
+        }
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #b8860b;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎲 لعبة محلية</h1>
+        <div class="info" id="gameInfo"></div>
+        <button class="btn" onclick="window.location.href='index.html'">العودة للرئيسية</button>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const mode = localStorage.getItem('localGameMode') || 'كلاسيكي';
+            const count = localStorage.getItem('localGameCount') || 4;
+            const players = JSON.parse(localStorage.getItem('localGamePlayers')) || ['لاعب 1', 'لاعب 2', 'لاعب 3', 'لاعب 4'];
+
+            let html = `<p><strong>النمط:</strong> ${mode}</p>`;
+            html += `<p><strong>عدد اللاعبين:</strong> ${count}</p>`;
+            html += `<p><strong>اللاعبون:</strong></p><ul class="players-list">`;
+            players.forEach(p => html += `<li>${p}</li>`);
+            html += `</ul>`;
+
+            document.getElementById('gameInfo').innerHTML = html;
+        };
+    </script>
+</body>
+</html>
