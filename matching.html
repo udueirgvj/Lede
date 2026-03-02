@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جاري المطابقة - Clipn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #0a0f1f 0%, #141b2b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            color: #fff;
+        }
+        .app {
+            max-width: 400px;
+            width: 100%;
+            background: rgba(18, 25, 40, 0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 30px 20px;
+            box-shadow: 0 25px 50px -8px rgba(0,0,0,0.6), 0 0 0 2px rgba(255,215,0,0.15) inset;
+            border: 1px solid rgba(255,215,0,0.3);
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,215,0,0.3);
+            color: gold;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+        .title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: gold;
+        }
+        .info-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 30px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid gold;
+        }
+        .rank-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        .rank-value {
+            background: gold;
+            color: black;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+        .bet-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .bet-amount {
+            color: gold;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+        .waiting-message {
+            margin: 30px 0;
+        }
+        .spinner {
+            border: 4px solid rgba(255,215,0,0.1);
+            border-top: 4px solid gold;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .opponent-found {
+            color: #4caf50;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .cancel-btn {
+            background: rgba(255,0,0,0.2);
+            border: 1px solid red;
+            color: red;
+            padding: 12px 30px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <div class="back-btn" onclick="cancelMatching()"><i class="fas fa-times"></i></div>
+            <div class="title">بحث عن خصم</div>
+            <div class="points-badge"><i class="fas fa-coins"></i><span id="pointsDisplay">1000+</span></div>
+        </div>
+
+        <div class="info-box">
+            <div class="rank-row">
+                <span>الترتيب</span>
+                <span class="rank-value">1</span>
+            </div>
+            <div class="bet-row">
+                <span>عملاات الدخول</span>
+                <span class="bet-amount" id="betDisplay">500</span>
+            </div>
+        </div>
+
+        <div class="waiting-message">
+            <div class="spinner"></div>
+            <p style="font-size:1.3rem; color:#ffd966;">جاري المطابقة</p>
+            <p style="color:#aaa;">وظفـن...</p>
+        </div>
+
+        <div id="opponentStatus"></div>
+
+        <div class="cancel-btn" onclick="cancelMatching()">إلغاء</div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        // استخراج matchId من URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchId = urlParams.get('matchId');
+        if (!matchId) {
+            alert('معرف المطابقة غير موجود');
+            window.location.href = 'index.html';
+        }
+
+        let currentUser = null;
+        let matchRef = null;
+        let opponentFound = false;
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = user;
+
+            // عرض نقاط المستخدم (يمكن جلبها من قاعدة البيانات)
+            const userPointsRef = database.ref('users/' + user.uid + '/points');
+            userPointsRef.once('value').then(snapshot => {
+                const points = snapshot.val() || 1000;
+                document.getElementById('pointsDisplay').innerText = points;
+            });
+
+            // الاستماع لطلب المطابقة الحالي
+            matchRef = database.ref('matchmaking/' + matchId);
+            matchRef.on('value', async (snapshot) => {
+                const matchData = snapshot.val();
+                if (!matchData) {
+                    // ربما تم حذف الطلب (ألغي)
+                    alert('تم إلغاء المطابقة');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                // عرض معلومات الرهان
+                document.getElementById('betDisplay').innerText = matchData.bet;
+
+                // البحث عن خصم مناسب
+                await findOpponent(matchData);
+            });
+        });
+
+        async function findOpponent(myMatchData) {
+            if (opponentFound) return;
+
+            const myUserId = currentUser.uid;
+            const myMode = myMatchData.mode;
+            const myBet = myMatchData.bet;
+            const myTimestamp = myMatchData.timestamp;
+
+            // البحث عن طلبات مطابقة أخرى بنفس النمط والرهان، ليست لنفس المستخدم، وخلال آخر 30 ثانية
+            const now = Date.now();
+            const thirtySecondsAgo = now - 30000;
+
+            const snapshot = await database.ref('matchmaking')
+                .orderByChild('timestamp')
+                .startAt(thirtySecondsAgo)
+                .once('value');
+
+            const matches = snapshot.val() || {};
+            let opponentMatchId = null;
+            let opponentData = null;
+
+            for (const id in matches) {
+                const m = matches[id];
+                if (id !== matchId && m.userId !== myUserId && m.mode === myMode && m.bet === myBet && m.status === 'waiting') {
+                    opponentMatchId = id;
+                    opponentData = m;
+                    break;
+                }
+            }
+
+            if (opponentMatchId && opponentData) {
+                // تم العثور على خصم
+                opponentFound = true;
+                document.getElementById('opponentStatus').innerHTML = '<p class="opponent-found">تم العثور على خصم! جاري التوجيه...</p>';
+
+                // إنشاء غرفة جديدة
+                const roomRef = database.ref('rooms').push();
+                const roomId = roomRef.key;
+                const roomData = {
+                    players: [myUserId, opponentData.userId],
+                    mode: myMode,
+                    bet: myBet,
+                    status: 'ready',
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                };
+                await roomRef.set(roomData);
+
+                // حذف كلا طلبي المطابقة
+                await database.ref('matchmaking/' + matchId).remove();
+                await database.ref('matchmaking/' + opponentMatchId).remove();
+
+                // حفظ معرف الغرفة لكل لاعب (اختياري)
+                await database.ref('users/' + myUserId + '/currentRoom').set(roomId);
+                await database.ref('users/' + opponentData.userId + '/currentRoom').set(roomId);
+
+                // التوجيه إلى صفحة اللعبة مع معرف الغرفة
+                setTimeout(() => {
+                    window.location.href = `board.html?roomId=${roomId}`;
+                }, 1500);
+            } else {
+                // لا يوجد خصم بعد، نستمر في البحث (سيتم استدعاء هذه الدالة مرة أخرى عند تغيير البيانات)
+                setTimeout(() => findOpponent(myMatchData), 3000);
+            }
+        }
+
+        function cancelMatching() {
+            if (matchRef) {
+                matchRef.remove();
+            }
+            window.location.href = 'index.html';
+        }
+
+        // تنظيف عند الإغلاق
+        window.addEventListener('beforeunload', () => {
+            if (matchRef) {
+                matchRef.remove();
+            }
+        });
+    </script>
+</body>
+</html>
