@@ -2,102 +2,97 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>LUDO - التطبيق الرسمي</title>
-    <!-- Font Awesome للأيقونات -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لودو – الرئيسية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- خط عصري -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- الجزء العلوي: النقاط والإشعارات -->
+    <div class="app">
+        <!-- شريط علوي مع صورة المستخدم -->
         <div class="top-bar">
-            <div class="points-badge">
-                <i class="fas fa-trophy"></i>
-                <span>No.1000+</span>
+            <div class="user-profile" onclick="window.location.href='profile.html'">
+                <img src="assets/default-avatar.png" alt="user" id="userAvatar" style="width:40px;height:40px;border-radius:50%;border:2px solid gold;">
+                <span id="userName">ضيف</span>
             </div>
-            <div class="menu-icon">
-                <i class="fas fa-bars"></i>
+            <div class="points" id="userPoints">
+                <i class="fas fa-coins" style="color:gold;"></i> <span id="pointsValue">1000+</span>
             </div>
         </div>
 
-        <!-- منطقة البطولة -->
+        <!-- البطولة -->
         <div class="tournament-banner">
-            <p class="tournament-text">
-                <i class="fas fa-crosshairs"></i> 
-                استفحص البطولة عند المستوى الرابع!
-            </p>
+            <i class="fas fa-crosshairs"></i>
+            <span>استفحص البطولة عند المستوى الرابع!</span>
         </div>
 
-        <!-- شعار اللعبة -->
-        <div class="logo-area">
-            <h1 class="game-logo">LUDO</h1>
-        </div>
+        <!-- الشعار -->
+        <h1 class="game-logo">LUDO</h1>
 
-        <!-- الأزرار الرئيسية (4 أزرار) -->
-        <div class="main-actions">
-            <button class="action-btn">
+        <!-- الأزرار الرئيسية -->
+        <div class="main-buttons">
+            <button class="main-btn vip" onclick="window.location.href='game-mode.html?type=vip'">
+                <i class="fas fa-crown"></i>
+                <span>عرفة VIP</span>
+            </button>
+            <button class="main-btn team" onclick="window.location.href='game-mode.html?type=team'">
                 <i class="fas fa-users"></i>
                 <span>تشكيل فريق</span>
             </button>
-            <button class="action-btn vip-btn">
-                <i class="fas fa-crown"></i>
-                <span>VIP غرفة</span>
-            </button>
-            <button class="action-btn">
-                <i class="fas fa-table"></i>
-                <span>طاولة خاصة<br>& بدون الإنترنت</span>
-            </button>
-            <button class="action-btn">
+            <button class="main-btn competitions" onclick="window.location.href='game-mode.html?type=competitions'">
                 <i class="fas fa-trophy"></i>
                 <span>مسابقات</span>
+            </button>
+            <button class="main-btn offline" onclick="window.location.href='board.html?local=true'">
+                <i class="fas fa-wifi-slash"></i>
+                <span>طاولة خاصة<br>& بدون الإنترنت</span>
             </button>
         </div>
 
         <!-- ألعاب أخرى -->
         <div class="other-games">
-            <div class="game-item active">
-                <i class="fas fa-dice"></i>
-                <span>لودو</span>
-            </div>
-            <div class="game-item">
-                <i class="fas fa-puzzle-piece"></i>
-                <span>جاكارو</span>
-            </div>
-            <div class="game-item">
-                <i class="fas fa-chess-board"></i>
-                <span>دومينو</span>
-            </div>
-            <div class="game-item">
-                <i class="fas fa-gamepad"></i>
-                <span>ألعاب أخرى</span>
+            <p class="other-games-title">ألعاب أخرى</p>
+            <div class="game-icons">
+                <div class="game-item" onclick="alert('دومينو قريباً')">
+                    <i class="fas fa-chess-board"></i>
+                    <span>دومينو</span>
+                </div>
+                <div class="game-item" onclick="alert('جاكارو قريباً')">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <span>جاكارو</span>
+                </div>
+                <div class="game-item active" onclick="window.location.href='game-mode.html'">
+                    <i class="fas fa-dice"></i>
+                    <span>لودو</span>
+                </div>
             </div>
         </div>
-
-        <!-- شريط التنقل السفلي -->
-        <nav class="bottom-nav">
-            <div class="nav-item active">
-                <i class="fas fa-home"></i>
-                <span>الأصدقاء</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-chart-line"></i>
-                <span>المجلس</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-gem"></i>
-                <span>المعرفة</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-calendar-alt"></i>
-                <span>الأحداث</span>
-            </div>
-        </nav>
     </div>
 
-    <!-- إضافة سلوك بسيط (اختياري) -->
-    <script src="script.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        // مراقبة حالة المصادقة
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('userName').innerText = user.displayName || 'مستخدم';
+                if (user.photoURL) {
+                    document.getElementById('userAvatar').src = user.photoURL;
+                }
+                // تحميل نقاط المستخدم من قاعدة البيانات
+                database.ref('users/' + user.uid + '/points').once('value').then(snapshot => {
+                    const points = snapshot.val() || 1000;
+                    document.getElementById('pointsValue').innerText = points;
+                });
+            } else {
+                // إذا لم يكن مسجلاً، نذهب إلى صفحة تسجيل الدخول
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
 </body>
 </html>
