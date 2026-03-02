@@ -3,62 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول – لودو</title>
+    <title>تسجيل وإنشاء حساب - لودو</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .login-container {
-            max-width: 400px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        .login-logo {
-            font-size: 4rem;
-            font-weight: 800;
-            color: gold;
-            text-shadow: 0 0 20px #ffbf00;
-            margin-bottom: 20px;
-        }
-        .login-tabs {
+        /* تنسيقات إضافية للصفحة */
+        .auth-tabs {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 25px;
         }
-        .tab {
+        .auth-tab {
             background: #1e2740;
-            padding: 10px 20px;
-            border-radius: 40px;
+            padding: 12px 30px;
+            border-radius: 50px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             border: 2px solid transparent;
+            transition: 0.2s;
         }
-        .tab.active {
+        .auth-tab.active {
             border-color: gold;
             background: #2a3450;
         }
-        .login-panel {
+        .auth-panel {
             background: rgba(0,0,0,0.3);
             border-radius: 40px;
             padding: 25px;
             margin-bottom: 20px;
         }
-        .phone-input {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .phone-input input {
+        .input-field {
+            width: 100%;
             padding: 15px;
+            margin: 10px 0;
             border-radius: 50px;
             border: none;
             background: #1e2740;
             color: white;
-            font-size: 1.1rem;
-            text-align: center;
+            font-size: 1rem;
+            text-align: right;
         }
-        .phone-input button {
+        .auth-btn {
+            width: 100%;
             background: gold;
             color: black;
             border: none;
@@ -66,70 +54,97 @@
             border-radius: 50px;
             font-weight: bold;
             font-size: 1.1rem;
+            margin: 10px 0;
             cursor: pointer;
         }
         .social-buttons {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
+            margin-top: 20px;
         }
         .social-btn {
             padding: 14px;
             border-radius: 50px;
             border: none;
             font-weight: 600;
-            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             cursor: pointer;
-            background: white;
-            color: black;
         }
         .social-btn.google { background: #DB4437; color: white; }
         .social-btn.facebook { background: #4267B2; color: white; }
         .social-btn.twitter { background: #1DA1F2; color: white; }
-        .social-btn i { font-size: 1.3rem; }
+        .phone-input {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
         .otp-container {
             margin-top: 15px;
         }
         .otp-input {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
             direction: ltr;
         }
         .otp-input input {
-            width: 50px;
-            height: 60px;
+            width: 45px;
+            height: 55px;
             text-align: center;
-            font-size: 1.5rem;
-            border-radius: 15px;
+            font-size: 1.3rem;
+            border-radius: 12px;
             border: none;
             background: #1e2740;
             color: white;
         }
         .hidden { display: none; }
+        .error-box {
+            background: #4a1e2b;
+            border: 2px solid #ff6b6b;
+            border-radius: 30px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #ffaaaa;
+            text-align: center;
+        }
+        .guest-link {
+            margin-top: 15px;
+            color: #aaa;
+            text-align: center;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="app login-container">
         <div class="login-logo">LUDO</div>
-        
-        <!-- التبويبات -->
-        <div class="login-tabs">
-            <div class="tab active" data-tab="phone">📱 هاتف</div>
-            <div class="tab" data-tab="social">🌐 شبكات</div>
+
+        <!-- تبويبات (تسجيل دخول / إنشاء حساب) -->
+        <div class="auth-tabs">
+            <div class="auth-tab active" data-tab="login">تسجيل دخول</div>
+            <div class="auth-tab" data-tab="signup">إنشاء حساب</div>
         </div>
 
-        <!-- لوحة الهاتف -->
-        <div id="phonePanel" class="login-panel">
-            <div class="phone-input" id="phoneEntry">
-                <input type="text" id="phoneNumber" placeholder="رقم الهاتف (مثال: 9665xxxxxxx)" dir="ltr">
-                <button id="sendOtpBtn">إرسال رمز التحقق</button>
+        <!-- لوحة تسجيل الدخول -->
+        <div id="loginPanel" class="auth-panel">
+            <h3 style="color:gold; text-align:center;">تسجيل الدخول</h3>
+            <input type="email" id="loginEmail" class="input-field" placeholder="البريد الإلكتروني">
+            <input type="password" id="loginPassword" class="input-field" placeholder="كلمة المرور">
+            <button class="auth-btn" id="loginBtn">تسجيل الدخول</button>
+            <div style="text-align:center; margin:15px 0; color:#aaa;">أو</div>
+            <button class="social-btn google" id="googleLogin"><i class="fab fa-google"></i> Google</button>
+            <button class="social-btn facebook" id="facebookLogin"><i class="fab fa-facebook-f"></i> Facebook</button>
+            <button class="social-btn twitter" id="twitterLogin"><i class="fab fa-x-twitter"></i> Twitter</button>
+            <div style="margin:15px 0;"></div>
+            <div class="phone-input">
+                <input type="text" id="phoneNumber" class="input-field" placeholder="رقم الهاتف (مثال: +964...)">
+                <button class="auth-btn" id="sendOtpBtn">إرسال رمز التحقق</button>
             </div>
-            <div id="otpSection" class="hidden">
+            <div id="otpSection" class="hidden otp-container">
                 <div class="otp-input" id="otpInputs">
                     <input type="text" maxlength="1" class="otp-digit">
                     <input type="text" maxlength="1" class="otp-digit">
@@ -138,26 +153,31 @@
                     <input type="text" maxlength="1" class="otp-digit">
                     <input type="text" maxlength="1" class="otp-digit">
                 </div>
-                <button id="verifyOtpBtn" style="margin-top:15px; background:gold;">تأكيد الرمز</button>
+                <button class="auth-btn" id="verifyOtpBtn">تأكيد الرمز</button>
             </div>
         </div>
 
-        <!-- لوحة الشبكات الاجتماعية -->
-        <div id="socialPanel" class="login-panel hidden">
-            <div class="social-buttons">
-                <button class="social-btn google" id="googleLogin">
-                    <i class="fab fa-google"></i> تسجيل الدخول بـ Google
-                </button>
-                <button class="social-btn facebook" id="facebookLogin">
-                    <i class="fab fa-facebook-f"></i> تسجيل الدخول بـ Facebook
-                </button>
-                <button class="social-btn twitter" id="twitterLogin">
-                    <i class="fab fa-x-twitter"></i> تسجيل الدخول بـ Twitter (X)
-                </button>
-            </div>
+        <!-- لوحة إنشاء حساب -->
+        <div id="signupPanel" class="auth-panel hidden">
+            <h3 style="color:gold; text-align:center;">إنشاء حساب جديد</h3>
+            <input type="text" id="signupName" class="input-field" placeholder="الاسم">
+            <input type="email" id="signupEmail" class="input-field" placeholder="البريد الإلكتروني">
+            <input type="password" id="signupPassword" class="input-field" placeholder="كلمة المرور">
+            <input type="password" id="signupConfirm" class="input-field" placeholder="تأكيد كلمة المرور">
+            <button class="auth-btn" id="signupBtn">إنشاء حساب</button>
+            <p style="color:#aaa; font-size:0.9rem; margin-top:10px;">بإنشاء حساب، ستتم إضافة معرف فريد لحسابك تلقائياً.</p>
         </div>
 
-        <p id="loginMessage" style="margin-top:15px; color:#ffaa00;"></p>
+        <!-- رسائل الخطأ -->
+        <div id="errorMessage" class="error-box hidden">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorText"></span>
+        </div>
+
+        <!-- دخول كضيف (للتجربة) -->
+        <div class="guest-link" onclick="guestLogin()">
+            <i class="fas fa-user-secret"></i> متابعة كضيف (بدون حفظ)
+        </div>
     </div>
 
     <!-- Firebase SDK -->
@@ -165,63 +185,124 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
     <script>
-        // متغيرات المصادقة
-        let confirmationResult = null;
-        const messageEl = document.getElementById('loginMessage');
-
-        // التبديل بين التبويبات
-        document.querySelectorAll('.tab').forEach(tab => {
+        // التبديل بين تسجيل الدخول وإنشاء حساب
+        document.querySelectorAll('.auth-tab').forEach(tab => {
             tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
-                const tabName = this.dataset.tab;
-                document.getElementById('phonePanel').classList.toggle('hidden', tabName !== 'phone');
-                document.getElementById('socialPanel').classList.toggle('hidden', tabName !== 'social');
+                const isLogin = this.dataset.tab === 'login';
+                document.getElementById('loginPanel').classList.toggle('hidden', !isLogin);
+                document.getElementById('signupPanel').classList.toggle('hidden', isLogin);
+                document.getElementById('errorMessage').classList.add('hidden');
             });
         });
 
-        // إرسال رمز التحقق للهاتف
-        document.getElementById('sendOtpBtn').addEventListener('click', () => {
-            const phoneNumber = document.getElementById('phoneNumber').value.trim();
-            if (!phoneNumber) {
-                messageEl.innerText = 'الرجاء إدخال رقم الهاتف';
-                return;
-            }
-            // تنسيق الرقم (يجب أن يبدأ برمز البلد)
-            const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : '+' + phoneNumber;
-            auth.signInWithPhoneNumber(formattedPhone, window.recaptchaVerifier)
-                .then(result => {
-                    confirmationResult = result;
-                    messageEl.innerText = 'تم إرسال الرمز إلى هاتفك';
-                    document.getElementById('phoneEntry').classList.add('hidden');
-                    document.getElementById('otpSection').classList.remove('hidden');
-                })
-                .catch(error => {
-                    messageEl.innerText = 'خطأ: ' + error.message;
-                });
+        // دالة عرض الخطأ
+        function showError(message) {
+            document.getElementById('errorText').innerText = message;
+            document.getElementById('errorMessage').classList.remove('hidden');
+        }
+
+        // تسجيل الدخول بالبريد الإلكتروني
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => window.location.href = 'index.html')
+                .catch(err => showError(err.message));
         });
 
-        // التحقق من الرمز
+        // إنشاء حساب جديد
+        document.getElementById('signupBtn').addEventListener('click', async () => {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+
+            if (!name || !email || !password) return showError('جميع الحقول مطلوبة');
+            if (password !== confirm) return showError('كلمة المرور غير متطابقة');
+
+            try {
+                const userCred = await auth.createUserWithEmailAndPassword(email, password);
+                // تحديث الاسم
+                await userCred.user.updateProfile({ displayName: name });
+                // إنشاء ID فريد للمستخدم وحفظه
+                await createUserProfile(userCred.user);
+                window.location.href = 'index.html';
+            } catch (err) {
+                showError(err.message);
+            }
+        });
+
+        // Google
+        document.getElementById('googleLogin').addEventListener('click', () => {
+            auth.signInWithPopup(googleProvider)
+                .then(async result => {
+                    // إذا كان مستخدم جديد، أنشئ له بروفايل
+                    if (result.additionalUserInfo.isNewUser) {
+                        await createUserProfile(result.user);
+                    }
+                    window.location.href = 'index.html';
+                })
+                .catch(err => showError(err.message));
+        });
+
+        // Facebook
+        document.getElementById('facebookLogin').addEventListener('click', () => {
+            auth.signInWithPopup(facebookProvider)
+                .then(async result => {
+                    if (result.additionalUserInfo.isNewUser) {
+                        await createUserProfile(result.user);
+                    }
+                    window.location.href = 'index.html';
+                })
+                .catch(err => showError(err.message));
+        });
+
+        // Twitter
+        document.getElementById('twitterLogin').addEventListener('click', () => {
+            auth.signInWithPopup(twitterProvider)
+                .then(async result => {
+                    if (result.additionalUserInfo.isNewUser) {
+                        await createUserProfile(result.user);
+                    }
+                    window.location.href = 'index.html';
+                })
+                .catch(err => showError(err.message));
+        });
+
+        // ------------------ الهاتف ------------------
+        let confirmationResult = null;
+        document.getElementById('sendOtpBtn').addEventListener('click', () => {
+            const phone = document.getElementById('phoneNumber').value.trim();
+            if (!phone) return showError('أدخل رقم الهاتف');
+            const formatted = phone.startsWith('+') ? phone : '+' + phone;
+            auth.signInWithPhoneNumber(formatted, window.recaptchaVerifier)
+                .then(result => {
+                    confirmationResult = result;
+                    document.getElementById('otpSection').classList.remove('hidden');
+                })
+                .catch(err => showError(err.message));
+        });
+
         document.getElementById('verifyOtpBtn').addEventListener('click', () => {
             const digits = document.querySelectorAll('.otp-digit');
             let otp = '';
             digits.forEach(d => otp += d.value);
-            if (otp.length !== 6) {
-                messageEl.innerText = 'أدخل الرمز المكون من 6 أرقام';
-                return;
-            }
+            if (otp.length !== 6) return showError('أدخل الرمز المكون من 6 أرقام');
             confirmationResult.confirm(otp)
-                .then(result => {
-                    messageEl.innerText = 'تم تسجيل الدخول بنجاح! جاري التحويل...';
+                .then(async result => {
+                    if (result.additionalUserInfo && result.additionalUserInfo.isNewUser) {
+                        await createUserProfile(result.user);
+                    }
                     window.location.href = 'index.html';
                 })
-                .catch(error => {
-                    messageEl.innerText = 'رمز غير صحيح';
-                });
+                .catch(err => showError('رمز غير صحيح'));
         });
 
-        // التنقل بين خانات OTP تلقائياً
+        // التنقل بين خانات OTP
         document.querySelectorAll('.otp-digit').forEach((input, index, inputs) => {
             input.addEventListener('input', function() {
                 if (this.value.length === 1 && index < inputs.length - 1) {
@@ -230,38 +311,16 @@
             });
         });
 
-        // تسجيل الدخول بـ Google
-        document.getElementById('googleLogin').addEventListener('click', () => {
-            auth.signInWithPopup(googleProvider)
-                .then(result => {
-                    window.location.href = 'index.html';
-                })
-                .catch(error => messageEl.innerText = error.message);
-        });
-
-        // تسجيل الدخول بـ Facebook
-        document.getElementById('facebookLogin').addEventListener('click', () => {
-            auth.signInWithPopup(facebookProvider)
-                .then(result => {
-                    window.location.href = 'index.html';
-                })
-                .catch(error => messageEl.innerText = error.message);
-        });
-
-        // تسجيل الدخول بـ Twitter
-        document.getElementById('twitterLogin').addEventListener('click', () => {
-            auth.signInWithPopup(twitterProvider)
-                .then(result => {
-                    window.location.href = 'index.html';
-                })
-                .catch(error => messageEl.innerText = error.message);
-        });
-
-        // reCAPTCHA (مطلوب لتسجيل الدخول بالهاتف)
+        // reCAPTCHA
         window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sendOtpBtn', {
             size: 'invisible',
             callback: () => {}
         });
+
+        // دوال مساعدة من script.js
+        async function createUserProfile(user) {
+            // سيتم تعريفها في script.js
+        }
     </script>
 </body>
 </html>
