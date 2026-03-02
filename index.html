@@ -3,91 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لودو – الرئيسية</title>
+    <title>Clipn - الصفحة الرئيسية</title>
+    <!-- Font Awesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- خط عربي جميل -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <style>
-        .user-id-box {
-            background: rgba(255,215,0,0.15);
-            border: 1px solid gold;
-            border-radius: 60px;
-            padding: 10px 20px;
-            display: inline-flex;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #0a0f1f 0%, #141b2b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            color: #fff;
+        }
+        .app {
+            max-width: 400px;
+            width: 100%;
+            background: rgba(18, 25, 40, 0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 30px 20px 40px;
+            box-shadow: 0 25px 50px -8px rgba(0,0,0,0.6), 0 0 0 2px rgba(255,215,0,0.15) inset;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+        /* شريط البطولة */
+        .tournament-banner {
+            background: linear-gradient(90deg, #3a2c0f, #1f283b);
+            padding: 12px 20px;
+            border-radius: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #ffd96666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #ffd966;
+            font-size: 0.95rem;
+        }
+        .tournament-banner i {
+            color: gold;
+        }
+        /* شعار Clipn */
+        .game-logo {
+            text-align: center;
+            font-size: 4.8rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            margin: 10px 0 25px;
+            background: linear-gradient(135deg, #f9e281, #ffb347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px #ffbf00;
+            filter: drop-shadow(0 8px 6px #00000060);
+        }
+        /* شبكة الأزرار الرئيسية (2x2) */
+        .main-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+        .main-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid transparent;
+            border-radius: 24px;
+            padding: 20px 8px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 10px;
-            font-size: 1.2rem;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 0 #0a0e17, 0 15px 25px rgba(0,0,0,0.5);
+            transition: 0.1s ease;
+            cursor: pointer;
+            border-image: linear-gradient(145deg, #ffd966, #b8860b) 1;
+            border-width: 2px;
+            border-style: solid;
+            border-color: #ffd96655;
+            line-height: 1.4;
+        }
+        .main-btn i {
+            font-size: 2.4rem;
+        }
+        /* ألوان الأزرار حسب الصورة */
+        .main-btn.vip i { color: #ff4d4d; }      /* أحمر */
+        .main-btn.team i { color: #4da6ff; }     /* أزرق */
+        .main-btn.competitions i { color: #ffaa33; } /* برتقالي */
+        .main-btn.offline i { color: #66ccff; }  /* أزرق فاتح */
+        .main-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 0 #0a0e17, 0 18px 30px rgba(0,0,0,0.6);
+            border-color: #ffd966;
+        }
+        .main-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 5px 0 #0a0e17, 0 10px 20px rgba(0,0,0,0.5);
+        }
+        /* قسم ألعاب أخرى */
+        .other-games {
+            background: rgba(0,0,0,0.25);
+            border-radius: 50px;
+            padding: 15px 20px;
+            margin-top: 10px;
+        }
+        .other-games-title {
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #aab7d4;
+            letter-spacing: 1px;
+        }
+        .game-icons {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .game-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #8e9bb5;
+            padding: 8px 12px;
+            border-radius: 40px;
+            transition: 0.2s;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            width: 70px;
+        }
+        .game-item i {
+            font-size: 1.8rem;
+            color: #5f6e8c;
+        }
+        .game-item:hover {
+            background: rgba(255,215,0,0.2);
             color: gold;
+        }
+        .game-item:hover i {
+            color: gold;
+        }
+        /* تنسيق النقاط (اختياري) */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
-        .logout-btn {
-            background: transparent;
-            border: 1px solid #ff6b6b;
-            color: #ff6b6b;
-            padding: 8px 20px;
-            border-radius: 40px;
+        .points-badge {
+            background: rgba(255,215,0,0.15);
+            backdrop-filter: blur(4px);
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255,215,0,0.5);
+            font-weight: 600;
+            color: #ffd966;
+        }
+        .points-badge i {
+            color: gold;
+        }
+        /* زر القائمة (اختياري) */
+        .menu-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #b9c8ff;
+            border: 1px solid rgba(255,255,255,0.1);
             cursor: pointer;
-            font-size: 0.9rem;
-            margin-right: 15px;
+            transition: 0.2s;
+        }
+        .menu-icon:hover {
+            background: rgba(255,215,0,0.2);
+            color: gold;
         }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- شريط علوي مع صورة المستخدم و ID -->
+        <!-- شريط علوي بنقاط (اختياري) -->
         <div class="top-bar">
-            <div class="user-profile" onclick="window.location.href='profile.html'">
-                <img src="assets/default-avatar.png" alt="user" id="userAvatar" style="width:40px;height:40px;border-radius:50%;border:2px solid gold;">
-                <span id="userName">ضيف</span>
+            <div class="points-badge">
+                <i class="fas fa-trophy"></i>
+                <span>No.1000+</span>
             </div>
-            <div class="points">
-                <i class="fas fa-id-card"></i> <span id="userIdDisplay"></span>
-                <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+            <div class="menu-icon">
+                <i class="fas fa-bars"></i>
             </div>
         </div>
 
-        <!-- البطولة -->
+        <!-- بانر البطولة -->
         <div class="tournament-banner">
             <i class="fas fa-crosshairs"></i>
             <span>استفحص البطولة عند المستوى الرابع!</span>
         </div>
 
-        <!-- الشعار -->
-        <h1 class="game-logo">LUDO</h1>
+        <!-- الشعار: Clipn بدلاً من LUDO -->
+        <h1 class="game-logo">Clipn</h1>
 
-        <!-- الأزرار الرئيسية -->
+        <!-- الأزرار الرئيسية (4) -->
         <div class="main-buttons">
-            <button class="main-btn vip" onclick="window.location.href='game-mode.html?type=vip'">
+            <!-- عرفة VIP (أحمر) -->
+            <button class="main-btn vip" onclick="window.location.href='vip.html'">
                 <i class="fas fa-crown"></i>
                 <span>عرفة VIP</span>
             </button>
-            <button class="main-btn team" onclick="window.location.href='game-mode.html?type=team'">
+            <!-- تشكيل فريق (أزرق) -->
+            <button class="main-btn team" onclick="window.location.href='team.html'">
                 <i class="fas fa-users"></i>
                 <span>تشكيل فريق</span>
             </button>
-            <button class="main-btn competitions" onclick="window.location.href='game-mode.html?type=competitions'">
+            <!-- مسابقات (برتقالي) -->
+            <button class="main-btn competitions" onclick="window.location.href='competitions.html'">
                 <i class="fas fa-trophy"></i>
                 <span>مسابقات</span>
             </button>
-            <button class="main-btn offline" onclick="window.location.href='board.html?local=true'">
+            <!-- طاولة خاصة & بدون الابتزت (أزرق فاتح) -->
+            <button class="main-btn offline" onclick="window.location.href='private.html'">
                 <i class="fas fa-wifi-slash"></i>
-                <span>طاولة خاصة<br>& بدون الإنترنت</span>
+                <span>طاولة خاصة<br>& بدون الابتزت</span>
             </button>
         </div>
 
-        <!-- ألعاب أخرى -->
+        <!-- قسم ألعاب أخرى -->
         <div class="other-games">
             <p class="other-games-title">ألعاب أخرى</p>
             <div class="game-icons">
-                <div class="game-item" onclick="alert('دومينو قريباً')">
+                <!-- دومينو -->
+                <div class="game-item" onclick="window.location.href='domino.html'">
                     <i class="fas fa-chess-board"></i>
                     <span>دومينو</span>
                 </div>
-                <div class="game-item" onclick="alert('جاكارو قريباً')">
+                <!-- جاكارو -->
+                <div class="game-item" onclick="window.location.href='jakaro.html'">
                     <i class="fas fa-puzzle-piece"></i>
                     <span>جاكارو</span>
                 </div>
-                <div class="game-item active" onclick="window.location.href='game-mode.html'">
+                <!-- لودو (يمكن أن يكون نشطاً) -->
+                <div class="game-item" onclick="window.location.href='ludo.html'">
                     <i class="fas fa-dice"></i>
                     <span>لودو</span>
                 </div>
@@ -95,30 +271,13 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-    <script src="firebase-config.js"></script>
-    <script src="script.js"></script>
+    <!-- أيقونة القائمة (اختياري) - لا يوجد رابط محدد -->
     <script>
-        // مراقبة حالة المصادقة
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('userName').innerText = user.displayName || 'مستخدم';
-                if (user.photoURL) document.getElementById('userAvatar').src = user.photoURL;
-                // جلب ID الخاص بالمستخدم من Realtime Database
-                database.ref('users/' + user.uid + '/userId').once('value').then(snapshot => {
-                    const userId = snapshot.val() || 'غير متوفر';
-                    document.getElementById('userIdDisplay').innerText = userId;
-                });
-            } else {
-                window.location.href = 'login.html';
-            }
+        // يمكن إضافة أي تفاعلات إضافية هنا
+        // على سبيل المثال، إذا نقرت على أيقونة القائمة، يمكن فتح صفحة الإعدادات
+        document.querySelector('.menu-icon').addEventListener('click', function() {
+            window.location.href = 'menu.html'; // افترض وجود صفحة قائمة
         });
-
-        function logout() {
-            auth.signOut().then(() => window.location.href = 'login.html');
-        }
     </script>
 </body>
 </html>
