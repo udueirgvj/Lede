@@ -1,0 +1,153 @@
+// ------------------------------
+// بيانات اللعبة (عامة)
+// ------------------------------
+let players = [
+    { color: 'red', pieces: [0, 0, 0, 0] },
+    { color: 'green', pieces: [0, 0, 0, 0] },
+    { color: 'yellow', pieces: [0, 0, 0, 0] },
+    { color: 'blue', pieces: [0, 0, 0, 0] }
+];
+let currentPlayer = 0;
+let diceValue = 0;
+let gameActive = true;
+
+// عناصر HTML
+const boardEl = document.getElementById('board');
+const rollDiceBtn = document.getElementById('rollDice');
+const diceResultEl = document.getElementById('diceResult');
+const messageEl = document.getElementById('message');
+const playerEls = document.querySelectorAll('.player');
+
+// ------------------------------
+// دوال Firebase
+// ------------------------------
+function saveGameState() {
+    gameRef.set({
+        players: players,
+        currentPlayer: currentPlayer,
+        diceValue: diceValue,
+        gameActive: gameActive
+    }).catch(error => {
+        console.error("خطأ في حفظ الحالة:", error);
+    });
+}
+
+// الاستماع للتغييرات القادمة من Firebase
+gameRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+        // تحديث المتغيرات المحلية
+        players = data.players;
+        currentPlayer = data.currentPlayer;
+        diceValue = data.diceValue;
+        gameActive = data.gameActive;
+
+        // تحديث واجهة المستخدم
+        renderPieces();
+        updateTurnMessage();
+        diceResultEl.textContent = `النرد: ${diceValue}`;
+    } else {
+        // أول مرة لا توجد بيانات، نحفظ الحالة الابتدائية
+        saveGameState();
+    }
+});
+
+// ------------------------------
+// دوال اللعبة
+// ------------------------------
+function createBoard() {
+    // إنشاء لوحة 15x15 (مثل السابق)
+    for (let i = 0; i < 225; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        
+        const row = Math.floor(i / 15);
+        const col = i % 15;
+        
+        if (row < 6 && col < 6) cell.classList.add('home-red');
+        else if (row < 6 && col > 8) cell.classList.add('home-green');
+        else if (row > 8 && col < 6) cell.classList.add('home-yellow');
+        else if (row > 8 && col > 8) cell.classList.add('home-blue');
+        
+        if ((row === 6 && col >= 0 && col <= 14) || (col === 6 && row >= 0 && row <= 14)) {
+            cell.classList.add('path-red');
+        }
+        
+        boardEl.appendChild(cell);
+    }
+}
+
+function renderPieces() {
+    // إزالة القطع القديمة
+    document.querySelectorAll('.piece').forEach(p => p.remove());
+    
+    // إضافة القطع حسب المصفوفة players
+    players.forEach((player, pIndex) => {
+        player.pieces.forEach((position, pieceIndex) => {
+            if (position !== 0) { // 0 يعني القطعة في البداية (لم تخرج)
+                // نحدد الخلية التي ستوضع فيها القطعة (هنا نستخدم position كرقم خلية مباشرة)
+                // لاحظ: هذا تبسيط كبير، في الواقع يجب تحويل position إلى إحداثيات حقيقية.
+                const cellIndex = position; // نفترض أن position هو رقم الخلية
+                if (cellIndex < boardEl.children.length) {
+                    const cell = boardEl.children[cellIndex];
+                    const piece = document.createElement('div');
+                    piece.classList.add('piece', player.color);
+                    piece.dataset.player = pIndex;
+                    piece.dataset.piece = pieceIndex;
+                    cell.appendChild(piece);
+                }
+            }
+        });
+    });
+}
+
+function updateTurnMessage() {
+    const colors = ['أحمر', 'أخضر', 'أصفر', 'أزرق'];
+    messageEl.textContent = gameActive ? `دور اللاعب ${colors[currentPlayer]}` : 'انتهت اللعبة';
+    playerEls.forEach((el, i) => {
+        el.style.opacity = i === currentPlayer ? '1' : '0.5';
+    });
+}
+
+function rollDice() {
+    if (!gameActive) return;
+
+    // رمي النرد
+    diceValue = Math.floor(Math.random() * 6) + 1;
+    diceResultEl.textContent = `النرد: ${diceValue}`;
+
+    // منطق بسيط: إذا كان النرد 6 أخرج قطعة (أول قطعة في المنزل)
+    if (diceValue === 6) {
+        const playerPieces = players[currentPlayer].pieces;
+        for (let i = 0; i < playerPieces.length; i++) {
+            if (playerPieces[i] === 0) {
+                playerPieces[i] = 1; // ضع القطعة على أول خلية (تحتاج تحسين)
+                break;
+            }
+        }
+    }
+
+    // نقل الدور إلى اللاعب التالي
+    currentPlayer = (currentPlayer + 1) % 4;
+    updateTurnMessage();
+
+    // إعادة رسم القطع محلياً (سيتم تحديثها أيضاً من Firebase)
+    renderPieces();
+
+    // حفظ الحالة الجديدة في Firebase
+    saveGameState();
+}
+
+// ------------------------------
+// تهيئة اللعبة
+// ------------------------------
+createBoard();
+
+// إضافة مستمع لحدث رمي النرد
+rollDiceBtn.addEventListener('click', rollDice);
+
+// عرض أولي (سيتم تحديثه فور ورود بيانات من Firebase)
+updateTurnMessage();
+
+// إذا أردت إضافة قطع تجريبية في البداية (اختياري)
+// لكن Firebase ستقوم بمزامنتها
