@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول – لودو</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .login-logo {
+            font-size: 4rem;
+            font-weight: 800;
+            color: gold;
+            text-shadow: 0 0 20px #ffbf00;
+            margin-bottom: 20px;
+        }
+        .login-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .tab {
+            background: #1e2740;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        .tab.active {
+            border-color: gold;
+            background: #2a3450;
+        }
+        .login-panel {
+            background: rgba(0,0,0,0.3);
+            border-radius: 40px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .phone-input {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .phone-input input {
+            padding: 15px;
+            border-radius: 50px;
+            border: none;
+            background: #1e2740;
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        .phone-input button {
+            background: gold;
+            color: black;
+            border: none;
+            padding: 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .social-btn {
+            padding: 14px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            background: white;
+            color: black;
+        }
+        .social-btn.google { background: #DB4437; color: white; }
+        .social-btn.facebook { background: #4267B2; color: white; }
+        .social-btn.twitter { background: #1DA1F2; color: white; }
+        .social-btn i { font-size: 1.3rem; }
+        .otp-container {
+            margin-top: 15px;
+        }
+        .otp-input {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            direction: ltr;
+        }
+        .otp-input input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5rem;
+            border-radius: 15px;
+            border: none;
+            background: #1e2740;
+            color: white;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="app login-container">
+        <div class="login-logo">LUDO</div>
+        
+        <!-- التبويبات -->
+        <div class="login-tabs">
+            <div class="tab active" data-tab="phone">📱 هاتف</div>
+            <div class="tab" data-tab="social">🌐 شبكات</div>
+        </div>
+
+        <!-- لوحة الهاتف -->
+        <div id="phonePanel" class="login-panel">
+            <div class="phone-input" id="phoneEntry">
+                <input type="text" id="phoneNumber" placeholder="رقم الهاتف (مثال: 9665xxxxxxx)" dir="ltr">
+                <button id="sendOtpBtn">إرسال رمز التحقق</button>
+            </div>
+            <div id="otpSection" class="hidden">
+                <div class="otp-input" id="otpInputs">
+                    <input type="text" maxlength="1" class="otp-digit">
+                    <input type="text" maxlength="1" class="otp-digit">
+                    <input type="text" maxlength="1" class="otp-digit">
+                    <input type="text" maxlength="1" class="otp-digit">
+                    <input type="text" maxlength="1" class="otp-digit">
+                    <input type="text" maxlength="1" class="otp-digit">
+                </div>
+                <button id="verifyOtpBtn" style="margin-top:15px; background:gold;">تأكيد الرمز</button>
+            </div>
+        </div>
+
+        <!-- لوحة الشبكات الاجتماعية -->
+        <div id="socialPanel" class="login-panel hidden">
+            <div class="social-buttons">
+                <button class="social-btn google" id="googleLogin">
+                    <i class="fab fa-google"></i> تسجيل الدخول بـ Google
+                </button>
+                <button class="social-btn facebook" id="facebookLogin">
+                    <i class="fab fa-facebook-f"></i> تسجيل الدخول بـ Facebook
+                </button>
+                <button class="social-btn twitter" id="twitterLogin">
+                    <i class="fab fa-x-twitter"></i> تسجيل الدخول بـ Twitter (X)
+                </button>
+            </div>
+        </div>
+
+        <p id="loginMessage" style="margin-top:15px; color:#ffaa00;"></p>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        // متغيرات المصادقة
+        let confirmationResult = null;
+        const messageEl = document.getElementById('loginMessage');
+
+        // التبديل بين التبويبات
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const tabName = this.dataset.tab;
+                document.getElementById('phonePanel').classList.toggle('hidden', tabName !== 'phone');
+                document.getElementById('socialPanel').classList.toggle('hidden', tabName !== 'social');
+            });
+        });
+
+        // إرسال رمز التحقق للهاتف
+        document.getElementById('sendOtpBtn').addEventListener('click', () => {
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            if (!phoneNumber) {
+                messageEl.innerText = 'الرجاء إدخال رقم الهاتف';
+                return;
+            }
+            // تنسيق الرقم (يجب أن يبدأ برمز البلد)
+            const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : '+' + phoneNumber;
+            auth.signInWithPhoneNumber(formattedPhone, window.recaptchaVerifier)
+                .then(result => {
+                    confirmationResult = result;
+                    messageEl.innerText = 'تم إرسال الرمز إلى هاتفك';
+                    document.getElementById('phoneEntry').classList.add('hidden');
+                    document.getElementById('otpSection').classList.remove('hidden');
+                })
+                .catch(error => {
+                    messageEl.innerText = 'خطأ: ' + error.message;
+                });
+        });
+
+        // التحقق من الرمز
+        document.getElementById('verifyOtpBtn').addEventListener('click', () => {
+            const digits = document.querySelectorAll('.otp-digit');
+            let otp = '';
+            digits.forEach(d => otp += d.value);
+            if (otp.length !== 6) {
+                messageEl.innerText = 'أدخل الرمز المكون من 6 أرقام';
+                return;
+            }
+            confirmationResult.confirm(otp)
+                .then(result => {
+                    messageEl.innerText = 'تم تسجيل الدخول بنجاح! جاري التحويل...';
+                    window.location.href = 'index.html';
+                })
+                .catch(error => {
+                    messageEl.innerText = 'رمز غير صحيح';
+                });
+        });
+
+        // التنقل بين خانات OTP تلقائياً
+        document.querySelectorAll('.otp-digit').forEach((input, index, inputs) => {
+            input.addEventListener('input', function() {
+                if (this.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+        });
+
+        // تسجيل الدخول بـ Google
+        document.getElementById('googleLogin').addEventListener('click', () => {
+            auth.signInWithPopup(googleProvider)
+                .then(result => {
+                    window.location.href = 'index.html';
+                })
+                .catch(error => messageEl.innerText = error.message);
+        });
+
+        // تسجيل الدخول بـ Facebook
+        document.getElementById('facebookLogin').addEventListener('click', () => {
+            auth.signInWithPopup(facebookProvider)
+                .then(result => {
+                    window.location.href = 'index.html';
+                })
+                .catch(error => messageEl.innerText = error.message);
+        });
+
+        // تسجيل الدخول بـ Twitter
+        document.getElementById('twitterLogin').addEventListener('click', () => {
+            auth.signInWithPopup(twitterProvider)
+                .then(result => {
+                    window.location.href = 'index.html';
+                })
+                .catch(error => messageEl.innerText = error.message);
+        });
+
+        // reCAPTCHA (مطلوب لتسجيل الدخول بالهاتف)
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sendOtpBtn', {
+            size: 'invisible',
+            callback: () => {}
+        });
+    </script>
+</body>
+</html>
