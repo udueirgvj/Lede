@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>طاولة خاصة - Clipn</title>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- خط Cairo -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -35,7 +33,6 @@
             border: 1px solid rgba(255,215,0,0.3);
         }
 
-        /* رأس الصفحة */
         .header {
             display: flex;
             align-items: center;
@@ -54,63 +51,46 @@
             justify-content: center;
             font-size: 1.4rem;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        .back-btn:hover {
-            background: rgba(255,215,0,0.2);
         }
         .title {
             font-size: 1.5rem;
             font-weight: 800;
             color: gold;
             text-align: center;
+            line-height: 1.2;
         }
         .subtitle {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #ffd966;
             text-align: center;
-            margin-top: -5px;
         }
 
-        /* بطاقة بدون إنترنت */
-        .offline-badge {
-            background: rgba(255,0,0,0.1);
-            border: 1px solid #ff6666;
-            border-radius: 40px;
-            padding: 8px 16px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #ff8888;
-            margin-bottom: 20px;
-        }
-
-        /* حدد النمط */
         .section-title {
             font-size: 1.2rem;
             font-weight: 700;
             color: #ffd966;
-            margin-bottom: 12px;
+            margin: 20px 0 12px;
             text-align: center;
         }
+
         .mode-row {
             display: flex;
             justify-content: center;
             gap: 12px;
-            margin-bottom: 25px;
+            margin-bottom: 10px;
         }
         .mode-btn {
             background: rgba(0,0,0,0.4);
             border: 2px solid #ffd96655;
             border-radius: 40px;
-            padding: 10px 25px;
+            padding: 10px 20px;
             font-weight: 600;
             color: white;
             cursor: pointer;
             transition: 0.1s;
             flex: 1;
             text-align: center;
-            max-width: 100px;
+            max-width: 110px;
         }
         .mode-btn.active {
             background: rgba(255,215,0,0.2);
@@ -118,7 +98,6 @@
             color: gold;
         }
 
-        /* اختيار عدد اللاعبين */
         .player-count-options {
             display: flex;
             justify-content: center;
@@ -129,7 +108,7 @@
             background: rgba(0,0,0,0.4);
             border: 2px solid #ffd96655;
             border-radius: 50px;
-            padding: 10px 20px;
+            padding: 8px 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -141,20 +120,19 @@
             border-color: gold;
         }
         .count-number {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             color: gold;
             line-height: 1;
         }
         .count-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #aaa;
         }
 
-        /* أسماء اللاعبين */
         .players-names {
             background: rgba(0,0,0,0.3);
-            border-radius: 40px;
+            border-radius: 30px;
             padding: 20px;
             margin-bottom: 25px;
             border: 1px solid #ffd96633;
@@ -168,7 +146,7 @@
             background: rgba(255,255,255,0.05);
             border: 1px solid #ffd96655;
             border-radius: 30px;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -187,11 +165,7 @@
             width: 100%;
             outline: none;
         }
-        .player-input input::placeholder {
-            color: #666;
-        }
 
-        /* الأزرار السفلية */
         .action-buttons {
             display: flex;
             gap: 15px;
@@ -224,71 +198,57 @@
             font-size: 1.2rem;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.1s;
-        }
-        .secondary-btn:active {
-            background: rgba(255,215,0,0.2);
         }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- رأس الصفحة -->
         <div class="header">
-            <div class="back-btn" onclick="window.location.href='index.html'">
-                <i class="fas fa-arrow-right"></i>
-            </div>
+            <div class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-right"></i></div>
             <div>
                 <div class="title">طاولة خاصة</div>
                 <div class="subtitle">بدون الإنترنت</div>
             </div>
-            <div style="width:44px;"></div> <!-- فراغ للمحاذاة -->
+            <div style="width:44px;"></div>
         </div>
 
-        <!-- حدد النمط -->
         <div class="section-title">حدد النمط</div>
         <div class="mode-row">
-            <div class="mode-btn" onclick="selectMode(this)" data-mode="سريع">السريع</div>
-            <div class="mode-btn" onclick="selectMode(this)" data-mode="ماستر">الماستر</div>
-            <div class="mode-btn active" onclick="selectMode(this)" data-mode="كلاسيكي">الكلامسيكي</div>
+            <div class="mode-btn active" data-mode="كلاسيكي">الخامسيك</div>
+            <div class="mode-btn" data-mode="ماستر">الماسير</div>
+            <div class="mode-btn" data-mode="سريع">السريع</div>
         </div>
 
-        <!-- اختيار عدد اللاعبين -->
         <div class="section-title">اختيار العدد</div>
         <div class="player-count-options">
-            <div class="count-option active" onclick="selectPlayerCount(2, this)">
-                <span class="count-number">2</span>
-                <span class="count-label">لاعبين</span>
-            </div>
-            <div class="count-option" onclick="selectPlayerCount(3, this)">
-                <span class="count-number">3</span>
-                <span class="count-label">لاعبين</span>
-            </div>
-            <div class="count-option" onclick="selectPlayerCount(4, this)">
+            <div class="count-option active" data-count="4">
                 <span class="count-number">4</span>
                 <span class="count-label">لاعبين</span>
             </div>
-        </div>
-
-        <!-- أسماء اللاعبين -->
-        <div class="players-names">
-            <div class="players-grid" id="playersGrid">
-                <!-- سيتم تعبئتها بواسطة JavaScript -->
+            <div class="count-option" data-count="3">
+                <span class="count-number">3</span>
+                <span class="count-label">لاعبين</span>
+            </div>
+            <div class="count-option" data-count="2">
+                <span class="count-number">2</span>
+                <span class="count-label">لاعبين</span>
             </div>
         </div>
 
-        <!-- أزرار الإجراء -->
+        <div class="players-names">
+            <div class="players-grid" id="playersGrid"></div>
+        </div>
+
         <div class="action-buttons">
             <button class="secondary-btn" onclick="window.location.href='index.html'">التسجيل</button>
-            <button class="primary-btn" onclick="startLocalGame()">ابدأ</button>
+            <button class="primary-btn" onclick="startGame()">ابدأ</button>
         </div>
     </div>
 
     <script>
         let currentMode = 'كلاسيكي';
-        let playerCount = 2; // افتراضي
+        let currentCount = 4;
 
-        // تهيئة أسماء اللاعبين
         function renderPlayers(count) {
             const grid = document.getElementById('playersGrid');
             grid.innerHTML = '';
@@ -296,44 +256,48 @@
                 const div = document.createElement('div');
                 div.className = 'player-input';
                 div.innerHTML = `
-                    <label>اللاعب ${i}</label>
+                    <label>ألعاب ${i}</label>
                     <input type="text" placeholder="اسم اللاعب ${i}" value="لاعب ${i}">
                 `;
                 grid.appendChild(div);
             }
         }
 
-        // تغيير عدد اللاعبين
-        window.selectPlayerCount = function(count, element) {
-            playerCount = count;
-            document.querySelectorAll('.count-option').forEach(opt => opt.classList.remove('active'));
-            element.classList.add('active');
-            renderPlayers(count);
-        };
+        // أحداث اختيار النمط
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentMode = this.dataset.mode;
+            });
+        });
 
-        // اختيار النمط
-        window.selectMode = function(element) {
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            currentMode = element.dataset.mode;
-        };
+        // أحداث اختيار عدد اللاعبين
+        document.querySelectorAll('.count-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('.count-option').forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+                currentCount = parseInt(this.dataset.count);
+                renderPlayers(currentCount);
+            });
+        });
 
-        // بدء اللعبة المحلية
-        window.startLocalGame = function() {
-            // جمع أسماء اللاعبين
-            const inputs = document.querySelectorAll('.player-input input');
+        // بدء اللعبة
+        function startGame() {
             const players = [];
-            inputs.forEach(input => players.push(input.value || 'لاعب'));
-
-            // هنا يمكن تخزين الإعدادات في localStorage أو التوجيه إلى صفحة اللعبة
-            alert(`بدء لعبة محلية بـ ${playerCount} لاعبين، النمط: ${currentMode}\nاللاعبون: ${players.join('، ')}`);
-            
-            // التوجيه إلى صفحة اللعبة (يمكنك تغيير الرابط)
-            // window.location.href = `local-game.html?mode=${currentMode}&players=${playerCount}`;
-        };
+            document.querySelectorAll('.player-input input').forEach(input => {
+                players.push(input.value || 'لاعب');
+            });
+            // تخزين المعلومات في localStorage للوصول إليها في الصفحة الجديدة
+            localStorage.setItem('localGameMode', currentMode);
+            localStorage.setItem('localGamePlayers', JSON.stringify(players));
+            localStorage.setItem('localGameCount', currentCount);
+            // التوجيه إلى صفحة اللعبة المحلية
+            window.location.href = 'local-game.html';
+        }
 
         // التحميل الأولي
-        renderPlayers(2);
+        renderPlayers(4);
     </script>
 </body>
 </html>
