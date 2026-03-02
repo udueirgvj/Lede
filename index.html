@@ -1,53 +1,103 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لعبة لودو</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>LUDO - التطبيق الرسمي</title>
+    <!-- Font Awesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- خط عصري -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="game-container">
-        <h1>🎲 لعبة لودو</h1>
-        <div class="board" id="board"></div>
-        <div class="controls">
-            <button id="rollDice">🎲 ارم النرد</button>
-            <span id="diceResult">النرد: 0</span>
+    <div class="app-container">
+        <!-- الجزء العلوي: النقاط والإشعارات -->
+        <div class="top-bar">
+            <div class="points-badge">
+                <i class="fas fa-trophy"></i>
+                <span>No.1000+</span>
+            </div>
+            <div class="menu-icon">
+                <i class="fas fa-bars"></i>
+            </div>
         </div>
-        <div class="players">
-            <div class="player player-red" data-player="0">اللاعب الأحمر</div>
-            <div class="player player-green" data-player="1">اللاعب الأخضر</div>
-            <div class="player player-yellow" data-player="2">اللاعب الأصفر</div>
-            <div class="player player-blue" data-player="3">اللاعب الأزرق</div>
+
+        <!-- منطقة البطولة -->
+        <div class="tournament-banner">
+            <p class="tournament-text">
+                <i class="fas fa-crosshairs"></i> 
+                استفحص البطولة عند المستوى الرابع!
+            </p>
         </div>
-        <p id="message">اضغط "ارم النرد" لبدء اللعبة</p>
+
+        <!-- شعار اللعبة -->
+        <div class="logo-area">
+            <h1 class="game-logo">LUDO</h1>
+        </div>
+
+        <!-- الأزرار الرئيسية (4 أزرار) -->
+        <div class="main-actions">
+            <button class="action-btn">
+                <i class="fas fa-users"></i>
+                <span>تشكيل فريق</span>
+            </button>
+            <button class="action-btn vip-btn">
+                <i class="fas fa-crown"></i>
+                <span>VIP غرفة</span>
+            </button>
+            <button class="action-btn">
+                <i class="fas fa-table"></i>
+                <span>طاولة خاصة<br>& بدون الإنترنت</span>
+            </button>
+            <button class="action-btn">
+                <i class="fas fa-trophy"></i>
+                <span>مسابقات</span>
+            </button>
+        </div>
+
+        <!-- ألعاب أخرى -->
+        <div class="other-games">
+            <div class="game-item active">
+                <i class="fas fa-dice"></i>
+                <span>لودو</span>
+            </div>
+            <div class="game-item">
+                <i class="fas fa-puzzle-piece"></i>
+                <span>جاكارو</span>
+            </div>
+            <div class="game-item">
+                <i class="fas fa-chess-board"></i>
+                <span>دومينو</span>
+            </div>
+            <div class="game-item">
+                <i class="fas fa-gamepad"></i>
+                <span>ألعاب أخرى</span>
+            </div>
+        </div>
+
+        <!-- شريط التنقل السفلي -->
+        <nav class="bottom-nav">
+            <div class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>الأصدقاء</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>المجلس</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-gem"></i>
+                <span>المعرفة</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>الأحداث</span>
+            </div>
+        </nav>
     </div>
+
+    <!-- إضافة سلوك بسيط (اختياري) -->
     <script src="script.js"></script>
 </body>
-<!-- إضافة Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
-<script>
-  // إعدادات Firebase الخاصة بك
-  const firebaseConfig = {
-    apiKey: "AIzaSyCYnCu8VkoOAOhnJTZBVmSGcPSeKB4vCAM",
-    authDomain: "tygggfs.firebaseapp.com",
-    databaseURL: "https://tygggfs-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "tygggfs",
-    storageBucket: "tygggfs.firebasestorage.app",
-    messagingSenderId: "532770652661",
-    appId: "1:532770652661:web:3182543dc802112bcf60bc",
-    measurementId: "G-K5CQXE4PX3"
-  };
-
-  // تهيئة Firebase
-  firebase.initializeApp(firebaseConfig);
-  
-  // الحصول على مرجع قاعدة البيانات
-  const database = firebase.database();
-</script>
-
-<!-- ملف اللعبة -->
-<script src="script.js"></script>
 </html>
