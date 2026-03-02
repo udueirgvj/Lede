@@ -1,153 +1,260 @@
-// ------------------------------
-// بيانات اللعبة (عامة)
-// ------------------------------
-let players = [
-    { color: 'red', pieces: [0, 0, 0, 0] },
-    { color: 'green', pieces: [0, 0, 0, 0] },
-    { color: 'yellow', pieces: [0, 0, 0, 0] },
-    { color: 'blue', pieces: [0, 0, 0, 0] }
-];
-let currentPlayer = 0;
-let diceValue = 0;
-let gameActive = true;
-
-// عناصر HTML
-const boardEl = document.getElementById('board');
-const rollDiceBtn = document.getElementById('rollDice');
-const diceResultEl = document.getElementById('diceResult');
-const messageEl = document.getElementById('message');
-const playerEls = document.querySelectorAll('.player');
-
-// ------------------------------
-// دوال Firebase
-// ------------------------------
-function saveGameState() {
-    gameRef.set({
-        players: players,
-        currentPlayer: currentPlayer,
-        diceValue: diceValue,
-        gameActive: gameActive
-    }).catch(error => {
-        console.error("خطأ في حفظ الحالة:", error);
-    });
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
 }
 
-// الاستماع للتغييرات القادمة من Firebase
-gameRef.on('value', (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-        // تحديث المتغيرات المحلية
-        players = data.players;
-        currentPlayer = data.currentPlayer;
-        diceValue = data.diceValue;
-        gameActive = data.gameActive;
-
-        // تحديث واجهة المستخدم
-        renderPieces();
-        updateTurnMessage();
-        diceResultEl.textContent = `النرد: ${diceValue}`;
-    } else {
-        // أول مرة لا توجد بيانات، نحفظ الحالة الابتدائية
-        saveGameState();
-    }
-});
-
-// ------------------------------
-// دوال اللعبة
-// ------------------------------
-function createBoard() {
-    // إنشاء لوحة 15x15 (مثل السابق)
-    for (let i = 0; i < 225; i++) {
-        const cell = document.createElement('div');
-        cell.classList.add('cell');
-        
-        const row = Math.floor(i / 15);
-        const col = i % 15;
-        
-        if (row < 6 && col < 6) cell.classList.add('home-red');
-        else if (row < 6 && col > 8) cell.classList.add('home-green');
-        else if (row > 8 && col < 6) cell.classList.add('home-yellow');
-        else if (row > 8 && col > 8) cell.classList.add('home-blue');
-        
-        if ((row === 6 && col >= 0 && col <= 14) || (col === 6 && row >= 0 && row <= 14)) {
-            cell.classList.add('path-red');
-        }
-        
-        boardEl.appendChild(cell);
-    }
+body {
+    background: linear-gradient(145deg, #0a0f1f 0%, #141b2b 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    color: #fff;
 }
 
-function renderPieces() {
-    // إزالة القطع القديمة
-    document.querySelectorAll('.piece').forEach(p => p.remove());
-    
-    // إضافة القطع حسب المصفوفة players
-    players.forEach((player, pIndex) => {
-        player.pieces.forEach((position, pieceIndex) => {
-            if (position !== 0) { // 0 يعني القطعة في البداية (لم تخرج)
-                // نحدد الخلية التي ستوضع فيها القطعة (هنا نستخدم position كرقم خلية مباشرة)
-                // لاحظ: هذا تبسيط كبير، في الواقع يجب تحويل position إلى إحداثيات حقيقية.
-                const cellIndex = position; // نفترض أن position هو رقم الخلية
-                if (cellIndex < boardEl.children.length) {
-                    const cell = boardEl.children[cellIndex];
-                    const piece = document.createElement('div');
-                    piece.classList.add('piece', player.color);
-                    piece.dataset.player = pIndex;
-                    piece.dataset.piece = pieceIndex;
-                    cell.appendChild(piece);
-                }
-            }
-        });
-    });
+.app-container {
+    max-width: 400px;
+    width: 100%;
+    background: rgba(18, 25, 40, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 40px;
+    padding: 24px 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 2px rgba(255,215,0,0.1) inset;
+    border: 1px solid rgba(255,215,0,0.3);
 }
 
-function updateTurnMessage() {
-    const colors = ['أحمر', 'أخضر', 'أصفر', 'أزرق'];
-    messageEl.textContent = gameActive ? `دور اللاعب ${colors[currentPlayer]}` : 'انتهت اللعبة';
-    playerEls.forEach((el, i) => {
-        el.style.opacity = i === currentPlayer ? '1' : '0.5';
-    });
+/* الشريط العلوي */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-function rollDice() {
-    if (!gameActive) return;
-
-    // رمي النرد
-    diceValue = Math.floor(Math.random() * 6) + 1;
-    diceResultEl.textContent = `النرد: ${diceValue}`;
-
-    // منطق بسيط: إذا كان النرد 6 أخرج قطعة (أول قطعة في المنزل)
-    if (diceValue === 6) {
-        const playerPieces = players[currentPlayer].pieces;
-        for (let i = 0; i < playerPieces.length; i++) {
-            if (playerPieces[i] === 0) {
-                playerPieces[i] = 1; // ضع القطعة على أول خلية (تحتاج تحسين)
-                break;
-            }
-        }
-    }
-
-    // نقل الدور إلى اللاعب التالي
-    currentPlayer = (currentPlayer + 1) % 4;
-    updateTurnMessage();
-
-    // إعادة رسم القطع محلياً (سيتم تحديثها أيضاً من Firebase)
-    renderPieces();
-
-    // حفظ الحالة الجديدة في Firebase
-    saveGameState();
+.points-badge {
+    background: rgba(255,215,0,0.15);
+    backdrop-filter: blur(4px);
+    padding: 8px 16px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255,215,0,0.5);
+    font-weight: 600;
+    color: #ffd966;
 }
 
-// ------------------------------
-// تهيئة اللعبة
-// ------------------------------
-createBoard();
+.points-badge i {
+    color: gold;
+}
 
-// إضافة مستمع لحدث رمي النرد
-rollDiceBtn.addEventListener('click', rollDice);
+.menu-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: #b9c8ff;
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: 0.2s;
+}
 
-// عرض أولي (سيتم تحديثه فور ورود بيانات من Firebase)
-updateTurnMessage();
+.menu-icon:hover {
+    background: rgba(255,215,0,0.2);
+    color: gold;
+}
 
-// إذا أردت إضافة قطع تجريبية في البداية (اختياري)
-// لكن Firebase ستقوم بمزامنتها
+/* شعار البطولة */
+.tournament-banner {
+    background: linear-gradient(90deg, #3a2c0f, #1f2a3a);
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-align: center;
+    margin-bottom: 20px;
+    border: 1px solid #ffd96655;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.tournament-text {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #ffd966;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tournament-text i {
+    color: gold;
+}
+
+/* شعار اللعبة */
+.logo-area {
+    text-align: center;
+    margin: 20px 0 30px;
+}
+
+.game-logo {
+    font-size: 4.5rem;
+    font-weight: 900;
+    letter-spacing: 6px;
+    text-shadow: 0 0 15px #ffd700, 0 0 30px #b8860b;
+    background: linear-gradient(45deg, #ffe68f, #ffd966);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 4px 6px black);
+}
+
+/* الأزرار الرئيسية */
+.main-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.action-btn {
+    background: rgba(20, 30, 50, 0.9);
+    border: 2px solid transparent;
+    border-radius: 24px;
+    padding: 18px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 8px 0 #0b111e, 0 10px 20px rgba(0,0,0,0.4);
+    transition: all 0.1s ease;
+    cursor: pointer;
+    border-image: linear-gradient(145deg, #ffd966, #b8860b) 1;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #ffd96655;
+}
+
+.action-btn i {
+    font-size: 2rem;
+    color: #ffd966;
+    filter: drop-shadow(0 4px 2px black);
+}
+
+.action-btn.vip-btn i {
+    color: gold;
+}
+
+.action-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 0 #0b111e, 0 15px 25px rgba(0,0,0,0.5);
+    border-color: #ffd966;
+}
+
+.action-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0 #0b111e, 0 8px 12px rgba(0,0,0,0.5);
+}
+
+/* قسم الألعاب الأخرى */
+.other-games {
+    display: flex;
+    justify-content: space-around;
+    background: rgba(0,0,0,0.3);
+    border-radius: 60px;
+    padding: 12px 8px;
+    margin-bottom: 30px;
+    border: 1px solid #ffd96633;
+}
+
+.game-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #aaa;
+    transition: 0.2s;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 40px;
+}
+
+.game-item i {
+    font-size: 1.4rem;
+    color: #5f6a7a;
+}
+
+.game-item.active {
+    color: #ffd966;
+    background: rgba(255,215,0,0.1);
+    padding: 4px 12px;
+}
+
+.game-item.active i {
+    color: gold;
+}
+
+.game-item:hover {
+    color: white;
+}
+
+.game-item:hover i {
+    color: #ffd966;
+}
+
+/* شريط التنقل السفلي */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50px;
+    padding: 10px 8px;
+    border: 1px solid rgba(255,215,0,0.2);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #8e9bb5;
+    transition: 0.2s;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 30px;
+}
+
+.nav-item i {
+    font-size: 1.3rem;
+    color: #6a7a9e;
+}
+
+.nav-item.active {
+    color: gold;
+    background: rgba(255,215,0,0.15);
+}
+
+.nav-item.active i {
+    color: gold;
+}
+
+.nav-item:hover {
+    color: white;
+}
+
+.nav-item:hover i {
+    color: #ffd966;
+}
