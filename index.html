@@ -7,17 +7,42 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .user-id-box {
+            background: rgba(255,215,0,0.15);
+            border: 1px solid gold;
+            border-radius: 60px;
+            padding: 10px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            color: gold;
+            margin-bottom: 20px;
+        }
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 15px;
+        }
+    </style>
 </head>
 <body>
     <div class="app">
-        <!-- شريط علوي مع صورة المستخدم -->
+        <!-- شريط علوي مع صورة المستخدم و ID -->
         <div class="top-bar">
             <div class="user-profile" onclick="window.location.href='profile.html'">
                 <img src="assets/default-avatar.png" alt="user" id="userAvatar" style="width:40px;height:40px;border-radius:50%;border:2px solid gold;">
                 <span id="userName">ضيف</span>
             </div>
-            <div class="points" id="userPoints">
-                <i class="fas fa-coins" style="color:gold;"></i> <span id="pointsValue">1000+</span>
+            <div class="points">
+                <i class="fas fa-id-card"></i> <span id="userIdDisplay"></span>
+                <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
             </div>
         </div>
 
@@ -70,29 +95,30 @@
         </div>
     </div>
 
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
     <script>
         // مراقبة حالة المصادقة
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('userName').innerText = user.displayName || 'مستخدم';
-                if (user.photoURL) {
-                    document.getElementById('userAvatar').src = user.photoURL;
-                }
-                // تحميل نقاط المستخدم من قاعدة البيانات
-                database.ref('users/' + user.uid + '/points').once('value').then(snapshot => {
-                    const points = snapshot.val() || 1000;
-                    document.getElementById('pointsValue').innerText = points;
+                if (user.photoURL) document.getElementById('userAvatar').src = user.photoURL;
+                // جلب ID الخاص بالمستخدم من Realtime Database
+                database.ref('users/' + user.uid + '/userId').once('value').then(snapshot => {
+                    const userId = snapshot.val() || 'غير متوفر';
+                    document.getElementById('userIdDisplay').innerText = userId;
                 });
             } else {
-                // إذا لم يكن مسجلاً، نذهب إلى صفحة تسجيل الدخول
                 window.location.href = 'login.html';
             }
         });
+
+        function logout() {
+            auth.signOut().then(() => window.location.href = 'login.html');
+        }
     </script>
 </body>
 </html>
