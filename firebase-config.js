@@ -1,3 +1,4 @@
+
 // إعدادات Firebase – استخدم إعداداتك الخاصة
 const firebaseConfig = {
     apiKey: "AIzaSyCYnCu8VkoOAOhnJTZBVmSGcPSeKB4vCAM",
@@ -19,4 +20,3 @@ const database = firebase.database();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 const twitterProvider = new firebase.auth.TwitterAuthProvider();
-// لإضافة تويتر (X) تحتاج تفعيله في Firebase Console
